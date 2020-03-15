@@ -1,3 +1,7 @@
+// BFS문제를 DFS로 접근하다 시간초과
+// 그래프 탐색 문제면 어떻게든 탐색하려고 하기 보다 먼저
+// 그래프 탐색 방식 부터 생각하고 시작하기
+
 #include<iostream>
 #include<vector>
 #include<queue>
