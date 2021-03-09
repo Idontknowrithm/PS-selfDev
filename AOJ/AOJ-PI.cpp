@@ -37,7 +37,8 @@ int mindiff(int start){
         ret = std::min(ret, valcalc(start, 4) + mindiff(start + 4));
     }
     if(input.size() - (start + 5) > 2){
-        std::cout << input.size() - (start + 5) << "333" << std::endl;
+        std::cout << int(input.size()) - (start + 5) << "333" << std::endl;
+        // 여기서 왜 -1이 나오지..? (일단 size_t가 unsigned라는 점 간과)
         ret = std::min(ret, valcalc(start, 5) + mindiff(start + 5));
     }
 }
