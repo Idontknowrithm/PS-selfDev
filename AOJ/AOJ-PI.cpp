@@ -1,3 +1,5 @@
+// 와.. 오래걸렸다. 일단 종만북 답안 코드를 무조건 믿지 말고 문제가 있으면 논리적으로 고려되지 않은 조건을 생각하자
+
 #include<iostream>
 #include<algorithm>
 #include<set>
@@ -24,23 +26,25 @@ int valcalc(int start, int len){
                                                         return 10;     
 }
 int mindiff(int start){
+    if(input.size() == start)     return 0;
+    if(input.size() - start <= 2) return 1000;
+
     int &ret = cache[start];
     if(ret != -1) return ret;
 
     ret = INF;
-    if(input.size() - (start + 3) > 2){
-        std::cout << input.size() - (start + 3) << "111" << std::endl;
+    if(int(input.size()) >= start + 3){
         ret = std::min(ret, valcalc(start, 3) + mindiff(start + 3));
     }
-    if(input.size() - (start + 4) > 2){
-        std::cout << input.size() - (start + 4) << "222" << std::endl;
+    if(int(input.size()) >= start + 4){
         ret = std::min(ret, valcalc(start, 4) + mindiff(start + 4));
     }
-    if(input.size() - (start + 5) > 2){
-        std::cout << int(input.size()) - (start + 5) << "333" << std::endl;
+    if(int(input.size()) >= start + 5){
         // 여기서 왜 -1이 나오지..? (일단 size_t가 unsigned라는 점 간과)
         ret = std::min(ret, valcalc(start, 5) + mindiff(start + 5));
     }
+    if(ret == INF) ret = -1;
+    return ret;
 }
 
 int main() {
