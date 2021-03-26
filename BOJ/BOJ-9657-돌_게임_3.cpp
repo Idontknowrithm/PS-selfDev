@@ -1,12 +1,14 @@
+// 앗.. 이기고 지는 걸 잘못 봐버렸다...
+
 #include<iostream>
 
 int N, table[1005];
 
 int DP(){
     // 1: CY   2: SK;
-    table[1] = 1;
-    table[2] = 2;
-    table[3] = 1;
+    table[1] = 2;
+    table[2] = 1;
+    table[3] = 2;
     table[4] = 2;
     table[5] = 2;
     if(N <= 5) return table[N];
