@@ -1,39 +1,48 @@
 #include<iostream>
 #include<algorithm>
 #include<vector>
+#include<cstring>
 
 typedef struct{
     int x, y, z;
 }block;
 
-int N, cache[100];
+int N, cache[105];
 std::vector<block> babylon;
 
 bool cmp(const block &a, const block &b){
-    return (a.x == b.x) ? a.y > b.y : a.x > b.x;
+    return (a.x == b.x) ? (a.y > b.y) : (a.x > b.x);
 }
 int DP(int start){
+    bool next_exist = false;
+
     if(start == babylon.size() - 1) return babylon[babylon.size() - 1].z;
     
-    int &ret = cache[start];
+    int &ret = cache[start + 1];
     if(ret) return ret;
+    
 
     ret = 0;
 
     for(int i = start + 1; i < babylon.size(); ++i){
-        if(start == -1)
+        if(start == -1){
             ret = std::max(ret, DP(i));
-        else if(babylon[start].x > babylon[i].x && babylon[start].y > babylon[i].y)
+            next_exist = true;
+        }
+        else if(babylon[start].x > babylon[i].x && babylon[start].y > babylon[i].y){
             ret = std::max(ret, DP(i) + babylon[start].z);
+            next_exist = true;
+        }
     }
-    return ret;
+    if(next_exist) return ret;
+    else           return babylon[start].z;
 }
 
 int main() {
     int a, b, c, rotate = 1;
     while(1){
         babylon.clear();
-        for(int i = 0; i < 100; ++i) cache[i] = 0;
+        memset(cache, 0, 100 * sizeof(int));
         
         scanf("%d", &N);
         if(!N) return 0;
@@ -48,13 +57,8 @@ int main() {
             else      babylon.push_back({c, a, b});
         }
         std::sort(babylon.begin(), babylon.end(), cmp);
-        puts("arr start");
-        for(int i = 0; i < babylon.size(); ++i)
-            printf("%d %d %d\n", babylon[i].x, babylon[i].y, babylon[i].z);
-        puts("");
+
         printf("Case %d: maximum height = %d\n", rotate++, DP(-1));
-        for(int i = 0; i < 10; ++i) printf("%d ", cache[i]);
-        puts("");
     }
     return 0;
 }
