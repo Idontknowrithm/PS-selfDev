@@ -1,48 +1,34 @@
 #include <string>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-typedef struct{
-    int len;
-    string name, contents;
-}music;
-
-string parser(int start, int end, string src){ // [start, end)
-    string ret = "";
-    for(int i = start; i < end; ++i)
-        ret += src[i];
-    return ret;
-}
-int lparser(string src){
-    int h = stoi(src.substr(6, 2)) - stoi(src.substr(0, 2));
-    int m = stoi(src.substr(9, 2)) - stoi(src.substr(3, 2));
-    return h * 60 + m;
+string numparser(int start, int end, string src){ //[start, end)
+    string tmp = "";
+    for(int i = start; i < end; ++i) tmp += src[i];
+    return tmp;
 }
 
-string solution(string m, vector<string> musicinfos) {
+string solution(string s) {
     string answer = "";
-    music list[105];
-    int list_size = 0;
-    for(int i = 0; i < musicinfos.size(); ++i){
-        int ptr;
-        list[i].len = lparser(musicinfos[i]);
-        ptr = musicinfos[i].find(",", 12);
-        list[i].name = parser(12, ptr, musicinfos[i]);
-        list[i].contents = musicinfos[i].substr(ptr + 1);
-        ++list_size;
+    vector<int> arr;
+    int prev_ptr =0, ptr = s.find(" ", 0);
+    while(ptr != string::npos){
+        string num = numparser(prev_ptr, ptr, s);
+        arr.push_back(stoi(num));
+        prev_ptr = ptr + 1;
+        ptr = s.find(" ", prev_ptr);
     }
-    for(int i = 0; i < list_size; ++i){
-        string tmp = list[i].contents;
-        list[i].contents = "";
-        for(int u = 0; u < list[i].len / tmp.size(); ++u){
-            list[i].contents += tmp;
-        }
-        list[i].contents += tmp.substr(0, list[i].len % tmp.size());
+    string num = numparser(prev_ptr, s.size(), s);
+    arr.push_back(stoi(num));
+    int min = 2147483647, max = -2147483648;
+    for(int i = 0; i < arr.size(); ++i){
+        min = (min > arr[i]) ? arr[i] : min;
+        max = (max < arr[i]) ? arr[i] : max;
     }
-    for(int i = 0; i < list_size; ++i){
-        if(list[i].contents.find(m, 0) != string::npos) answer = list[i].name;
-    }
-    
+    answer += to_string(min);
+    answer += " ";
+    answer += to_string(max);
     return answer;
 }
