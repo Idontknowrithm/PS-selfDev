@@ -1,27 +1,46 @@
 #include <string>
 #include <vector>
-#include <algorithm>
 
 using namespace std;
 
-long long pac(int n){
-    long long ret = 1;
-    for(long long i = 1; i <= (long long)n; ++i) ret *= i;
-    return ret;
+int N, M, test[25][25];
+
+bool brute(int r, int c, vector<vector<int>> &key, vector<vector<int>> &lock){
+    for(int i = 0; i < N; ++i)
+    for(int u = 0; u < N; ++u)
+        test[i][u] = lock[i][u];
+    for(int i = 0; i < M; ++i)
+    for(int u = 0; u < M; ++u){
+        if(r + i >= 0 && r + i < N &&
+           c + u >= 0 && c + u < N){
+            test[r + i][c + u] += key[i][u];
+        }
+    }
+    bool possible = true;
+    for(int i = 0; i < N; ++i)
+    for(int u = 0; u < N; ++u)
+        possible = (test[i][u] == 1) ? possible : false;
+    return possible;
 }
 
-vector<int> solution(int n, long long k) {
-    vector<int> answer, tmp;
+bool solution(vector<vector<int>> key, vector<vector<int>> lock) {
+    bool answer = false;
+    N = lock.size(); M = key.size();
 
-    for(int i = 1; i <= n; ++i)
-        tmp.push_back(i);
-    for(int i = 0; i < n - 1; ++i){
-        long long div = (k - 1) / pac(n - i - 1);
-        answer.push_back(tmp[div]);
-        tmp.erase(tmp.begin() + (int)div);
-        k = k - pac(n - i - 1) * div;
+    for(int k = 0; k < 4; ++k){
+        for(int i = 0; i < N + M + 1; ++i){
+            for(int u = 0; u < N + M + 1; ++u){
+                answer = (brute(i - M, u - M, key, lock)) ? true : answer;        
+            }
+        }
+        int tmp[25][25];
+        for(int i = 0; i < M; ++i)
+        for(int u = 0; u < M; ++u)
+            tmp[M - u - 1][i] = key[i][u];
+        for(int i = 0; i < M; ++i)
+        for(int u = 0; u < M; ++u)
+            key[i][u] = tmp[i][u];
     }
-    answer.push_back(tmp[0]);
 
     return answer;
 }
