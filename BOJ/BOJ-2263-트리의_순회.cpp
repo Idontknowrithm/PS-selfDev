@@ -1,3 +1,5 @@
+// 순회 방법을... 헷갈리지 말자!
+
 #include<iostream>
 #include<vector>
 #include<set>
@@ -7,7 +9,7 @@ typedef struct{
     int is, ie, ps, pe;
 }query;
 
-int N, afa;
+int N;
 std::vector<int> in, post, pre;
 
 // [start, end)
@@ -17,36 +19,17 @@ int find(int value){
     return -1;
 }
 void traversal(int in_start, int in_end, int post_start, int post_end){
-    
-    pre.push_back(post[post_end - 1]);
-    int divider = find(post[post_end - 1]);
-    if(divider == -1) {
-        printf("ERR\n");
+    if(in_start == in_end || post_start == post_end)
+        return;
+    if(in_start == in_end || post_start == post_end){
+        pre.push_back(post[post_start]);
         return;
     }
-    if(afa < 100)
-    printf("star %d %d %d %d\n", in_start, divider, post_start, divider);
-    traversal(in_start, divider, post_start, divider);
-    if(afa < 100)
-    printf("en %d %d %d %d\n", divider + 1, in_end, divider, post_end - 1);
-    traversal(divider + 1, in_end, divider, post_end - 1);
-}
-void trav(int in_start, int in_end, int post_start, int post_end){
-    std::queue<query> q;
-    q.push({in_start, in_end, post_start, post_end});
-
-    while(!q.empty()){
-        query tmp = q.front();
-        q.pop();
-        if(tmp.is == tmp.ie || tmp.ps == tmp.pe) continue;
-        if(tmp.is + 1 == tmp.ie || tmp.ps + 1 == tmp.pe){
-            pre.push_back(post[tmp.ps]);
-            continue;
-        }
-        pre.push_back(post[tmp.pe - 1]);
-        int divider = find(post[tmp.pe - 1]);
-        traversal
-    }
+    pre.push_back(post[post_end - 1]);
+    int divider = find(post[post_end - 1]);
+    
+    traversal(in_start, divider, post_start, post_start + divider - in_start);
+    traversal(divider + 1, in_end, post_end - (in_end - divider), post_end - 1);
 }
 
 int main() {
