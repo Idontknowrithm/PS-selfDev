@@ -49,7 +49,7 @@ int main() {
     ans = matpow(B);
     for(int i = 0; i < N; ++i){
         for(int u = 0; u < N; ++u)
-            printf("%lld ", ans[i][u]);
+            printf("%lld ", ans[i][u] % 1000);
         puts("");
     }
     return 0;
