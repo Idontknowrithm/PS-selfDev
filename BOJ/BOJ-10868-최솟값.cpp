@@ -1,6 +1,9 @@
+// numeric_limits 를 사용하려면 limits 헤더를 포함 시켜야 
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
+#include<limits>
 #define ll long long
 
 typedef int unit;
@@ -17,7 +20,12 @@ class segment_tree{
         segment_tree(const std::vector<unit> &arr){
             N = arr.size() - 1;
             seq.resize(N * 4);
+            base();
             init(arr, 1, N, 1);
+        }
+        void base(){
+            for(int i = 0; i < N * 4; ++i)
+                seq[i] = unit_max;
         }
         unit init(const std::vector<unit> &arr, unit left, unit right, unit root){
             if(left == right){
@@ -43,20 +51,18 @@ class segment_tree{
 };
 
 int main() {
-  int input, a, b;
-  scanf("%d %d", &N, &M);
-  arr.push_back(1000000500);
-  for(int i = 0; i < N; ++i){
+    int input, a, b;
+    scanf("%d %d", &N, &M);
+    arr.push_back(1000000500);
+    for(int i = 0; i < N; ++i){
     scanf("%d", &input);
     arr.push_back(input);
-   
-  }
- 
-  segment_tree segtree(arr);
-  for(int i = 0; i < M; ++i){
-    scanf("%d %d", &a, &b);
+    }
 
-    printf("%d\n", segtree.query(1, N, 1, a, b));
-  }
-  return 0;
+    segment_tree segtree(arr);
+    for(int i = 0; i < M; ++i){
+        scanf("%d %d", &a, &b);
+        printf("%d\n", segtree.query(a, b, 1, 1, N));
+    }
+    return 0;
 }
