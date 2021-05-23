@@ -1,3 +1,5 @@
+// 문제 생기면 빠르게 print로 디버그 해볼 수밖에..
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -42,7 +44,7 @@ class segment_tree{
         }
         pp query(unit left, unit right, unit root, unit this_left, unit this_right){
             if(right < this_left || this_right < left)
-                return {-1, 0};
+                return {-1, unit_max};
             if(left <= this_left && this_right <= right)
                 return seq[root];
             
@@ -60,9 +62,9 @@ class segment_tree{
 };
 
 unit DQ(segment_tree &st, pp divider, unit left, unit right){
-    puts("ok");
     if(left > right) return 0;
     if(left == right) return divider.second;
+    
     unit max = divider.second * (right - left + 1);
     pp left_div = st.query(left, divider.first - 1);
     max = std::max(max, DQ(st, left_div, left, divider.first - 1));
@@ -83,7 +85,6 @@ int main() {
         }
         segment_tree segtree(arr);
         pp tmp = segtree.query(1, N);
-
         ans = DQ(segtree, tmp, 1, N);
         
         printf("%lld\n", ans);
