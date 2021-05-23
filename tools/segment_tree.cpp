@@ -38,4 +38,20 @@ class segment_tree{
             return std::min(query(left, right, root * 2, this_left, mid),
                             query(left, right, root * 2 + 1, mid + 1, this_right));
         }
-}
+        unit query(unit left, unit right){
+            return query(left, right, 1, 1, N);
+        }
+        unit update(unit idx, unit new_val, unit root, unit this_left, unit this_right){
+            if(idx < this_left || this_right < idx)
+                return seq[root];
+            if(this_left == this_right)
+                return seq[root] = new_val;
+            
+            unit mid = (this_left + this_right) / 2;
+            return seq[root] = std::min(update(idx, new_val, root * 2, this_left, mid), 
+                                        update(idx, new_val, root * 2 + 1, mid + 1, this_right));
+        }
+        unit update(unit idx, unit new_val){
+            return update(idx, new_val, 1, 1, N);
+        }
+};
