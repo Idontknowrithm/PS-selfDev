@@ -27,11 +27,18 @@ void make_sum2(int idx, int prev_sum){
 
 int main() {
     scanf("%d %d", &N, &S);
-    for(int i = 0; i < N; ++i)
-        if(i <= N / 2)
-            scanf("%d", &seq1[i]);
-        else 
-            scanf("%d", &seq2[i - N / 2 - 1]);
+    if(N & 1)
+        for(int i = 0; i < N; ++i)
+            if(i <= N / 2)
+                scanf("%d", &seq1[i]);
+            else 
+                scanf("%d", &seq2[i - N / 2 - 1]);
+    else
+        for(int i = 0; i < N; ++i)
+            if(i < N / 2)
+                scanf("%d", &seq1[i]);
+            else 
+                scanf("%d", &seq2[i - N / 2]);
     seq1_size = N / 2;
     seq2_size = N / 2;
     (N % 2 == 1) ? (++seq1_size) : 0;
@@ -42,10 +49,19 @@ int main() {
 
     int ptr1 = 0, ptr2 = 0;
     while(ptr1 != sum1.size() && ptr2 != sum2.size()){
-        if(sum1[ptr1] + sum2[ptr2] == S) ++ans;
-        if(ptr1 != sum1.size() - 1 && sum1[ptr1] == sum1[ptr1 + 1]) ++ptr1;
-        else if(ptr2 != sum2.size() - 1 && sum2[ptr2] == sum2[ptr2 + 1]) ++ptr2;
-        else if(sum1[ptr1] + sum2[ptr2] < S) ++ptr1;
+        int count1 = 0, count2 = 0;
+        while(ptr1 != sum1.size() - 1 && sum1[ptr1] + sum2[ptr2] == S && sum1[ptr1] == sum1[ptr1 + 1]){
+            ++count1;
+            ++ptr1;
+        }
+        if(count1) --ptr1;
+        while(ptr2 != sum2.size() - 1 && sum1[ptr1] + sum2[ptr2] == S && sum2[ptr2] == sum2[ptr2 + 1]){
+            ++count2;
+            ++ptr2;
+        }
+        if(count2) --ptr2;
+        ans += count1 * count2;
+        if(sum1[ptr1] + sum2[ptr2] < S) ++ptr1;
         else                            ++ptr2;
     }
     if(S == 0) --ans;
