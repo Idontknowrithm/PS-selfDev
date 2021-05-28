@@ -49,19 +49,20 @@ int main() {
 
     int ptr1 = 0, ptr2 = 0;
     while(ptr1 != sum1.size() && ptr2 != sum2.size()){
-        int count1 = 0, count2 = 0;
-        while(ptr1 != sum1.size() - 1 && sum1[ptr1] + sum2[ptr2] == S && sum1[ptr1] == sum1[ptr1 + 1]){
-            ++count1;
-            ++ptr1;
+        int count1 = 1, count2 = 1;
+        if(sum1[ptr1] + sum2[ptr2] == S){
+            while(ptr1 != sum1.size() - 1 && sum1[ptr1] == sum1[ptr1 + 1]){
+                ++count1;
+                ++ptr1;
+            }
+            while(ptr2 != sum2.size() - 1 && sum2[ptr2] == sum2[ptr2 + 1]){
+                ++count2;
+                ++ptr2;
+            }
+            ans += count1 * count2;
+            ++ptr1; ++ptr2;
         }
-        if(count1) --ptr1;
-        while(ptr2 != sum2.size() - 1 && sum1[ptr1] + sum2[ptr2] == S && sum2[ptr2] == sum2[ptr2 + 1]){
-            ++count2;
-            ++ptr2;
-        }
-        if(count2) --ptr2;
-        ans += count1 * count2;
-        if(sum1[ptr1] + sum2[ptr2] < S) ++ptr1;
+        else if(sum1[ptr1] + sum2[ptr2] < S) ++ptr1;
         else                            ++ptr2;
     }
     if(S == 0) --ans;
