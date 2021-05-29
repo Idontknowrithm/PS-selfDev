@@ -1,8 +1,13 @@
+// 사이클은 dfs로 찾자
+// 간단한 예제 손으로 풀어보면서 코너 케이스 체크하기
+
 #include<iostream>
 #include<vector>
 #include<queue>
+#include<stack>
 #include<set>
 #include<algorithm>
+#include<cstring>
 #define pp std::pair<int, int>
 
 int N, M, prev_node[1005], input[1005];
@@ -27,18 +32,31 @@ void traversal(){
         }
     }
 }
-bool cycle(){ // cycle을 dfs로..
-    for(int i = 1; i <= N; ++i){
-        std::queue<int> bfs;
-        bfs.push(i);
-        while(!bfs.empty()){
-            int tmp = bfs.front();
-            bfs.pop();
-            for(int u = 0; u < graph[tmp].size(); ++u){
-                if(graph[tmp][u] == i){
-                    return true;
+bool cycle(){
+    int visited[1005], in_stack[1005];
+    for(int s = 1; s <= N; ++s){
+        memset(visited, 0, sizeof(visited));
+        memset(in_stack, 0, sizeof(in_stack));
+        std::stack<int> dfs;
+        dfs.push(s);
+        visited[s] = 1;
+        in_stack[s] = 1;
+        while(!dfs.empty()){
+            int tmp = dfs.top();
+            bool next_exist = false;
+            for(int i = 0; i < graph[tmp].size(); ++i){
+                if(in_stack[graph[tmp][i]]) return true;
+                if(!visited[graph[tmp][i]]){
+                    dfs.push(graph[tmp][i]);
+                    visited[graph[tmp][i]] = 1;
+                    in_stack[graph[tmp][i]] = 1;
+                    next_exist = true;
+                    break;
                 }
-                bfs.push(graph[tmp][u]);
+            }
+            if(!next_exist){
+                in_stack[tmp] = 0;
+                dfs.pop();
             }
         }
     }
@@ -63,11 +81,9 @@ int main() {
         graph[tmp.first].push_back(tmp.second);
         ++prev_node[tmp.second];
     }
-    if(cycle()){
+    if(cycle())
         printf("0");
-    }
-    else{
+    else
         traversal();
-    }
     return 0;
 }
