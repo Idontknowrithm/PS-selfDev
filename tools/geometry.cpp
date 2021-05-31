@@ -62,7 +62,7 @@ double ccw(vec_2 p, vec_2 a, vec_2 b){
 bool seg_intersection(vec_2 s1, vec_2 e1, vec_2 s2, vec_2 e2){
     double one, two;
     one = ccw(s1, e1, s2) * ccw(s1, e1, e2);
-    two = ccw(s2, e2, s1) * ccw(s2, e2, e2);
+    two = ccw(s2, e2, s1) * ccw(s2, e2, e1);
     if(one == 0 && two == 0){
         if(e1 < s1) std::swap(s1, e1);
         if(e2 < s2) std::swap(s2, e2);
