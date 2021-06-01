@@ -41,7 +41,9 @@ class vec_2{
         return x * v.x + y * v.y;
     }
     double cross(const vec_2& v) const{
-        return x * v.y - v.x * y;
+        if(x * v.y - v.x * y < 0)  return (double)-1;
+        if(x * v.y - v.x * y > 0)  return (double)1;
+        if(x * v.y - v.x * y == 0) return (double)0;
     }
     // projection
     vec_2 project(const vec_2& v) const{
