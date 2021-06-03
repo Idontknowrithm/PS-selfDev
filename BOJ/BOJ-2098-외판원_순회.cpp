@@ -1,21 +1,24 @@
+// 진짜 이거 말이 안되는 오류다 싶은 곳은 진짜 말이 안되는 오류일 확률이 큼
+// 합리적일 수 있는 부분들을 비판적으로 테스트 해봐야 함
+// 생각하는 부분도 당연한 곳에서 당연한 것으로 이어지는 사고를 연습하자
+
 #include<iostream>
 #include<cstring>
 #include<algorithm>
-#define ll long long
 
-const ll INF = 50000000;
-ll N, W[20][20], cache[20][1 << 20];
+const int INF = 50000000;
+int N, W[20][20], cache[20][1 << 20];
 
-ll salesperson(ll here, ll visited){
-    if(visited == (1 << N) - 1) return W[here][0];
+int salesperson(int here, int visited){
+    if(visited == (1 << N) - 1) return (W[here][0] == 0) ? INF : W[here][0];
 
-    ll &ret = cache[here][visited];
-    if(ret >= 0) return ret;
+    int &ret = cache[here][visited];
+    if(ret > 0) return ret;
 
     ret = INF;
-    for(ll i = 0; i < N; ++i){
-        if(visited & (1 << i)) continue;
-        ll tmp = W[here][i] + salesperson(i, visited + (1 << i));
+    for(int i = 0; i < N; ++i){
+        if(visited & (1 << i) || !W[here][i]) continue;
+        int tmp = W[here][i] + salesperson(i, visited + (1 << i));
         ret = std::min(ret, tmp);
     }
     return ret;
@@ -23,10 +26,10 @@ ll salesperson(ll here, ll visited){
 
 int main() {
     scanf("%d", &N);
-    for(ll i = 0; i < N; ++i)
-    for(ll u = 0; u < N; ++u)
+    for(int i = 0; i < N; ++i)
+    for(int u = 0; u < N; ++u)
         scanf("%d", &W[i][u]);
     memset(cache, -1, sizeof(cache));
-    printf("%d", salesperson(0, 0));
+    printf("%d", salesperson(0, 1)); // sales(0, 0)으로 
     return 0;
-}// 갈 수 없는 경우 W[i][j] = 0 인 경우를 고려하자
+}
