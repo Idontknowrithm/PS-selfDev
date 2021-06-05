@@ -1,3 +1,7 @@
+// 비합리적인 부분을 파고드는 것은 조금 고쳤는데
+// 이번에는 합리적인 오류를 찾는 자체에 조금 시간이 걸림
+// 알고리즘 돌아가면서 필요한 부분에 대해 하나씩 
+
 #include<iostream>
 #include<queue>
 #include<algorithm>
@@ -10,7 +14,7 @@
 int y[4] = {1, 0, -1, 0};
 int x[4] = {0, -1, 0, 1};
 int T, N, M, door, key, ans, visited[105][105];
-char building[105][105], key_input[105];
+char building[105][105], key_input[100005];
 std::vector<pp> where_door;
 
 bool possible(int R, int C){
@@ -24,14 +28,14 @@ void traversal(int startR, int startC){
         pp tmp = bfs.front();
         bfs.pop();
         if(building[tmp.r][tmp.c] >= 'A' && building[tmp.r][tmp.c] <= 'Z'){
-            int t = (1 << (building[tmp.r][tmp.c] - 'A'));
-            door |= t;
+            int t = building[tmp.r][tmp.c] - 'A';
+            door |= (1 << t);
             where_door.push_back({tmp.r, tmp.c});
         }
         else{
             if(building[tmp.r][tmp.c] >= 'a' && building[tmp.r][tmp.c] <= 'z'){
-                int t = (1 << (building[tmp.r][tmp.c] - 'a'));
-                key |= t;
+                int t = building[tmp.r][tmp.c] - 'a';
+                key |= (1 << t);
                 building[tmp.r][tmp.c] = '.';
             }
             else if(building[tmp.r][tmp.c] == '$'){
@@ -50,17 +54,18 @@ void traversal(int startR, int startC){
     }
 }
 
-int main() {
-    std::string no_key = "0";
-    
+int main() {    
     for(scanf("%d\n", &T); T > 0; --T){
+        where_door.clear(); // 와.. 진짜 이거 때문에.. ㅠㅠㅠ
         ans = key = 0;
         scanf("%d %d\n", &N, &M);
-        for(int i = 0; i < N; ++i){
-            for(int u = 0; u < M; ++u)
+        memset(building, '.', sizeof(building));
+        for(int i = 1; i <= N; ++i){
+            for(int u = 1; u <= M; ++u)
                 scanf("%c", &building[i][u]);
             getchar();
         }
+        N += 2; M += 2;
         int ptr = 0;
         while(1){
             char ch = getchar();
@@ -77,14 +82,7 @@ int main() {
         while(1){
             door = 0;
             memset(visited, 0, sizeof(visited));
-            for(int i = 0; i < M; ++i){
-                if(building[0][i] != '*' && !visited[0][i]) traversal(0, i);
-                if(building[N - 1][i] != '*' && !visited[N - 1][i]) traversal(N - 1, i);
-            }
-            for(int i = 0; i < N; ++i){
-                if(building[i][0] != '*' && !visited[i][0]) traversal(i, 0);
-                if(building[i][M - 1] != '*' && !visited[i][M - 1]) traversal(i, M - 1);
-            }
+            traversal(0, 0);
             if(!(door & key)) break;
             for(int i = 0; i < where_door.size(); ++i){
                 int tmp_door = building[where_door[i].r][where_door[i].c] - 'A';
