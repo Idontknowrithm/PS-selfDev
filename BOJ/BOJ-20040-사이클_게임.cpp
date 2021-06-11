@@ -1,3 +1,5 @@
+// union find 자료구조 사용 시 집합에 접근할 때 i 말고 find_set(i)로 접근을 해야한다
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -10,6 +12,7 @@ int find_set(int val){
     return val;
 }
 void union_set(int first, int second){
+    int temp;
     if(first > second)
         std::swap(first, second);
     else if(first == second) return;
@@ -30,7 +33,7 @@ int main() {
             ans = i + 1;
         }
         else{
-            union_set(ia, ib);
+            union_set(find_set(ia), find_set(ib)); // 여기...
         }
     }
     printf("%d", ans);
