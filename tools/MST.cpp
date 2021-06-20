@@ -14,12 +14,21 @@ std::vector<edge> edge_vec;
 bool cmp(const edge a, const edge b){
     return a.weight < b.weight;
 }
-int findSet(int val){
-    while(val != set[val])
-        val = set[val];
-    return val;
+// 갱신 자체가 빠른 findset
+// int find_set(int val){
+//     while(val != set[val])
+//         val = set[val];
+//     return val;
+// }
+// 전처리로 쿼리가 많을 때 빠른 findset
+int find_set(int num){
+    if (set[num]==num)
+        return num;
+    int parent = find_set(set[num]);
+    set[num] = parent;
+    return parent;
 }
-void unionSet(int first, int second){
+void union_set(int first, int second){
     int temp;
     if(first > second)
         std::swap(first, second);
@@ -42,8 +51,8 @@ int main(){
     std::sort(edge_vec.begin(), edge_vec.end(), cmp);
 
     for(int i = 0; i < M; ++i){
-        if(findSet(edge_vec[i].start) != findSet(edge_vec[i].last)){
-            unionSet(findSet(edge_vec[i].start), findSet(edge_vec[i].last));
+        if(find_set(edge_vec[i].start) != find_set(edge_vec[i].last)){
+            union_set(find_set(edge_vec[i].start), find_set(edge_vec[i].last));
             answer += edge_vec[i].weight;
             ++selected;
         }
