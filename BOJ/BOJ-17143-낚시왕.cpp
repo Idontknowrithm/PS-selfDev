@@ -29,15 +29,24 @@ void sharks_are_moving(){
             case 1: // ^
                 div = (R - obj[i].r + obj[i].s) / (R - 1);
                 mod = (R - obj[i].r + obj[i].s) % (R - 1);
-                if(div != 0 && !(div & 1)){
+                if(!div && !mod){
+                    obj[i].r = R;
+                    break;
+                }
+                else if(div == 1 && !mod){
+                    obj[i].r = 1;
+                    break;
+                }
+                if(div && !(div & 1)){
                     obj[i].d = 2;
                 }
-                if(obj[i].d = 2)
+                if(obj[i].d == 2 || !div)
                     obj[i].r = R;
                 else 
                     obj[i].r = 1;
                 if(mod){
-                    obj[i].d = (obj[i].d == 2) ? 1 : 2;
+                    if(div)
+                        obj[i].d = (obj[i].d == 2) ? 1 : 2;
                     if(obj[i].d == 1)
                         obj[i].r -= mod;
                     else 
@@ -47,15 +56,16 @@ void sharks_are_moving(){
             case 2: // v
                 div = (obj[i].r + obj[i].s - 1) / (R - 1);
                 mod = (obj[i].r + obj[i].s - 1) % (R - 1);
-                if(div != 0 && !(div & 1)){
+                if(div && !(div & 1)){
                     obj[i].d = 1;
                 }
-                if(obj[i].d = 1)
+                if(obj[i].d == 1 || !div)
                     obj[i].r = 1;
                 else 
                     obj[i].r = R;
                 if(mod){
-                    obj[i].d = (obj[i].d == 1) ? 2 : 1;
+                    if(div)
+                        obj[i].d = (obj[i].d == 1) ? 2 : 1;
                     if(obj[i].d == 2)
                         obj[i].r += mod;
                     else 
@@ -65,15 +75,16 @@ void sharks_are_moving(){
             case 3: // >
                 div = (obj[i].c + obj[i].s - 1) / (C - 1);
                 mod = (obj[i].c + obj[i].s - 1) % (C - 1);
-                if(div != 0 && !(div & 1)){
+                if(div && !(div & 1)){
                     obj[i].d = 4;
                 }
-                if(obj[i].d = 4)
+                if(obj[i].d == 4 || !div)
                     obj[i].c = 1;
                 else 
                     obj[i].c = C;
                 if(mod){
-                    obj[i].d = (obj[i].d == 4) ? 3 : 4;
+                    if(div)
+                        obj[i].d = (obj[i].d == 4) ? 3 : 4;
                     if(obj[i].d == 3)
                         obj[i].c += mod;
                     else 
@@ -83,15 +94,24 @@ void sharks_are_moving(){
             case 4: // <
                 div = (C - obj[i].c + obj[i].s) / (C - 1);
                 mod = (C - obj[i].c + obj[i].s) % (C - 1);
-                if(div != 0 && !(div & 1)){
+                if(!div && !mod){
+                    obj[i].c = C;
+                    break;
+                }
+                else if(div == 1 && !mod){
+                    obj[i].c = 1;
+                    break;
+                }
+                if(div && !(div & 1)){
                     obj[i].d = 3;
                 }
-                if(obj[i].d = 3)
+                if(obj[i].d == 3 || !div)
                     obj[i].c = C;
                 else 
                     obj[i].c = 1;
                 if(mod){
-                    obj[i].d = (obj[i].d == 3) ? 4 : 3;
+                    if(div)
+                        obj[i].d = (obj[i].d == 3) ? 4 : 3;
                     if(obj[i].d == 4)
                         obj[i].c -= mod;
                     else 
@@ -117,10 +137,10 @@ void sharks_are_moving(){
 int main() {
     int ir, ic, is, id, iz;
     scanf("%d %d %d", &R, &C, &M);
-    for(int i = 0; i < M; ++i){
+    for(int i = 1; i <= M; ++i){
         scanf("%d %d %d %d %d", &ir, &ic, &is, &id, &iz);
-        obj[i + 1] = {ir, ic, is, id, iz};
-        fishing[ir][ic] = i + 1;
+        obj[i] = {ir, ic, is, id, iz};
+        fishing[ir][ic] = i;
     }
     for(int i = 1; i <= C; ++i){
         for(int u = 1; u <= R; ++u){
