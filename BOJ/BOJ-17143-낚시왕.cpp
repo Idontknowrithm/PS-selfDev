@@ -11,6 +11,7 @@ int R, C, M, ans, fishing[105][105];
 
 // 1 2 3 4
 // ^ v > <
+
 void sharks_are_moving(){
     for(int i = 1; i <= M; ++i){
         /*
@@ -25,97 +26,87 @@ void sharks_are_moving(){
             continue;
         fishing[obj[i].r][obj[i].c] = 0;
         int div, mod;
+        if(obj[i].d == 3 && obj[i].c == C) obj[i].d = 4;
+        else if(obj[i].d == 4 && obj[i].c == 1) obj[i].d = 3;
+        else if(obj[i].d == 1 && obj[i].r == 1) obj[i].d = 2;
+        else if(obj[i].d == 2 && obj[i].r == R) obj[i].d = 1;
         switch(obj[i].d){
             case 1: // ^
-                div = (R - obj[i].r + obj[i].s) / (R - 1);
-                mod = (R - obj[i].r + obj[i].s) % (R - 1);
-                if(!div && !mod){
+                div = ((R - 1) + (R - obj[i].r + 1) + obj[i].s) / (R - 1);
+                mod = ((R - 1) + (R - obj[i].r + 1) + obj[i].s) % (R - 1);
+                obj[i].d = 2;
+
+                if(div & 1){
+                    obj[i].d = 1;
                     obj[i].r = R;
-                    break;
                 }
-                else if(div == 1 && !mod){
+                else{
                     obj[i].r = 1;
-                    break;
                 }
-                if(div && !(div & 1)){
-                    obj[i].d = 2;
-                }
-                if(obj[i].d == 2 || !div)
-                    obj[i].r = R;
-                else 
-                    obj[i].r = 1;
                 if(mod){
-                    if(div)
-                        obj[i].d = (obj[i].d == 2) ? 1 : 2;
-                    if(obj[i].d == 1)
-                        obj[i].r -= mod;
-                    else 
-                        obj[i].r += mod;
+                    obj[i].r += (obj[i].d == 2) ? mod - 1 : -(mod - 1);
+                }
+                else{
+                    obj[i].r += (obj[i].d == 2) ? 1 : -1;
+                    obj[i].d = (obj[i].d == 2) ? 1 : 2;
                 }
                 break;
             case 2: // v
-                div = (obj[i].r + obj[i].s - 1) / (R - 1);
-                mod = (obj[i].r + obj[i].s - 1) % (R - 1);
-                if(div && !(div & 1)){
+                div = (obj[i].r + obj[i].s) / (R - 1);
+                mod = (obj[i].r + obj[i].s) % (R - 1);
+                
+                if(div & 1){
                     obj[i].d = 1;
-                }
-                if(obj[i].d == 1 || !div)
-                    obj[i].r = 1;
-                else 
                     obj[i].r = R;
+                }
+                else{
+                    obj[i].r = 1;
+                }
                 if(mod){
-                    if(div)
-                        obj[i].d = (obj[i].d == 1) ? 2 : 1;
-                    if(obj[i].d == 2)
-                        obj[i].r += mod;
-                    else 
-                        obj[i].r -= mod;
+                    obj[i].r += (obj[i].d == 2) ? mod - 1 : -(mod - 1);
+                }
+                else{
+                    obj[i].r += (obj[i].d == 2) ? 1 : -1;
+                    obj[i].d = (obj[i].d == 2) ? 1 : 2;
                 }
                 break;
             case 3: // >
-                div = (obj[i].c + obj[i].s - 1) / (C - 1);
-                mod = (obj[i].c + obj[i].s - 1) % (C - 1);
-                if(div && !(div & 1)){
+                div = (obj[i].c + obj[i].s) / (C - 1);
+                mod = (obj[i].c + obj[i].s) % (C - 1);
+                
+                if(div & 1){
                     obj[i].d = 4;
-                }
-                if(obj[i].d == 4 || !div)
-                    obj[i].c = 1;
-                else 
                     obj[i].c = C;
+                }
+                else{
+                    obj[i].c = 1;
+                }
                 if(mod){
-                    if(div)
-                        obj[i].d = (obj[i].d == 4) ? 3 : 4;
-                    if(obj[i].d == 3)
-                        obj[i].c += mod;
-                    else 
-                        obj[i].c -= mod;
+                    obj[i].c += (obj[i].d == 3) ? mod - 1 : -(mod - 1);
+                }
+                else{
+                    obj[i].c += (obj[i].d == 3) ? 1 : -1;
+                    obj[i].d = (obj[i].d == 3) ? 4 : 3;
                 }
                 break;
             case 4: // <
-                div = (C - obj[i].c + obj[i].s) / (C - 1);
-                mod = (C - obj[i].c + obj[i].s) % (C - 1);
-                if(!div && !mod){
+                div = ((C - 1) + (C - obj[i].c + 1) + obj[i].s) / (C - 1);
+                mod = ((C - 1) + (C - obj[i].c + 1) + obj[i].s) % (C - 1);
+                obj[i].d = 3;
+
+                if(div & 1){
+                    obj[i].d = 4;
                     obj[i].c = C;
-                    break;
                 }
-                else if(div == 1 && !mod){
+                else{
                     obj[i].c = 1;
-                    break;
                 }
-                if(div && !(div & 1)){
-                    obj[i].d = 3;
-                }
-                if(obj[i].d == 3 || !div)
-                    obj[i].c = C;
-                else 
-                    obj[i].c = 1;
                 if(mod){
-                    if(div)
-                        obj[i].d = (obj[i].d == 3) ? 4 : 3;
-                    if(obj[i].d == 4)
-                        obj[i].c -= mod;
-                    else 
-                        obj[i].c += mod;
+                    obj[i].c += (obj[i].d == 3) ? mod - 1 : -(mod - 1);
+                }
+                else{
+                    obj[i].c += (obj[i].d == 3) ? 1 : -1;
+                    obj[i].d = (obj[i].d == 3) ? 4 : 3;
                 }
                 break;
         }
