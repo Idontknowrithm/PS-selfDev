@@ -1,3 +1,6 @@
+// if를 중복으로 거쳐야 하는지, 혹은 if 부분을 어느 한 부분만 거치면 되는지도 판단해야함
+// 중복으로 거쳐야 하면 모두 if로, 아니면 if-elseif 
+
 #include<iostream>
 #include<algorithm>
 
@@ -8,12 +11,14 @@ std::string input;
 void find_pal(){
     for(int i = input.size() - 1; i >= 0; --i){
         for(int u = i; u < input.size(); ++u){
-            if(i == u)
+            if(i == u){
                 pal[i][u] = 1;
-            else if(input[u] == input[u - 1])
-                pal[i][u] = pal[i][u - 1];
-            else if(input[i] == input[u])
-                pal[i][u] = pal[i + 1][u - 1];
+                continue;
+            }
+            if(input[u] == input[u - 1] && u - 1 == i)
+                pal[i][u] = (pal[i][u] == 1) ? 1 : pal[i][u - 1];
+            if(input[i] == input[u])
+                pal[i][u] = (pal[i][u] == 1) ? 1 : pal[i + 1][u - 1];
         }
     }
 }
