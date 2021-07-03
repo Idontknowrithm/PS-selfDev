@@ -5,7 +5,7 @@
 #define ll long long
 
 typedef struct{
-    ll x, y, z, idx;
+    ll x, y, z; int idx;
 }coordinate;
 typedef struct{
     int a, b;
@@ -14,7 +14,7 @@ typedef struct{
 
 ll ans;
 int N, connected, set[100005];
-std::vector<edge> datas;
+std::vector<edge> edges;
 std::vector<coordinate> Xsort, Ysort, Zsort;
 
 bool cmpX(const coordinate a, const coordinate b){
@@ -58,16 +58,27 @@ int main() {
 
     for(int i = 0; i < N - 1; ++i){
         if(Xsort[i].idx < Xsort[i + 1].idx)
-            datas.push_back({Xsort[i].idx, Xsort[i + 1].idx, std::abs(Xsort[i].x - Xsort[i + 1].x)});
+            edges.push_back({Xsort[i].idx, Xsort[i + 1].idx, std::abs(Xsort[i].x - Xsort[i + 1].x)});
         else
-            datas.push_back({Xsort[i + 1].idx, Xsort[i].idx, std::abs(Xsort[i].x - Xsort[i + 1].x)});
+            edges.push_back({Xsort[i + 1].idx, Xsort[i].idx, std::abs(Xsort[i].x - Xsort[i + 1].x)});
         if(Ysort[i].idx < Ysort[i + 1].idx)
-            datas.push_back({Ysort[i].idx, Ysort[i + 1].idx, std::abs(Ysort[i].y - Ysort[i + 1].y)});
+            edges.push_back({Ysort[i].idx, Ysort[i + 1].idx, std::abs(Ysort[i].y - Ysort[i + 1].y)});
         else
-            datas.push_back({Ysort[i + 1].idx, Ysort[i].idx, std::abs(Ysort[i].y - Ysort[i + 1].y)});
+            edges.push_back({Ysort[i + 1].idx, Ysort[i].idx, std::abs(Ysort[i].y - Ysort[i + 1].y)});
         if(Zsort[i].idx < Zsort[i + 1].idx)
-            datas.push_back({Zsort[i].idx, Zsort[i + 1].idx, std::abs(Zsort[i].z - Zsort[i + 1].z)});
+            edges.push_back({Zsort[i].idx, Zsort[i + 1].idx, std::abs(Zsort[i].z - Zsort[i + 1].z)});
         else 
-            datas.push_back({Zsort[i + 1].idx, Zsort[i].idx, std::abs(Zsort[i].z - Zsort[i + 1].z)});
+            edges.push_back({Zsort[i + 1].idx, Zsort[i].idx, std::abs(Zsort[i].z - Zsort[i + 1].z)});
     }
+    std::sort(edges.begin(), edges.end(), cmp_edge);
+    
+    for(int i = 0; i < edges.size() && connected < N - 1; ++i){
+        if(find_set(edges[i].a) != find_set(edges[i].b)){
+            union_set(find_set(edges[i].a), find_set(edges[i].b));
+            ans += edges[i].val;
+            ++connected;
+        }
+    }
+    printf("%lld", ans);
+    return 0;
 }
