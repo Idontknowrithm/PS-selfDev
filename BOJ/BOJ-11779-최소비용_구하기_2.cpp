@@ -1,3 +1,5 @@
+// 이미 최소 비용으로 갱신된 곳은 굳이 탐색할 필요가 
+
 #include<iostream>
 #include<queue>
 #include<algorithm>
@@ -30,6 +32,7 @@ void path_finder(){
     while(!dijk.empty()){
         data tmp = dijk.top();
         dijk.pop();
+        if(tmp.weight > len[tmp.v]) continue; // 이 부분 추가
         for(int i = 0; i < graph[tmp.v].size(); ++i){
             if(tmp.weight + graph[tmp.v][i].second < len[graph[tmp.v][i].first]){
                 len[graph[tmp.v][i].first] = tmp.weight + graph[tmp.v][i].second;
