@@ -2,10 +2,11 @@
 #include<vector>
 #include<algorithm>
 #include<cmath>
+#include<stack>
 
-typedef double unit;
+typedef int unit;
 
-const unit pi = 2.0 * acos(0.0);
+const double pi = 2.0 * acos(0.0);
 
 class vec_2{
     public:
@@ -16,7 +17,9 @@ class vec_2{
         return (x == v.x && y == v.y);
     }
     bool operator <(const vec_2& v) const{
-        return (x != v.x) ? (x < v.x) : (y < v.y);
+        if(1ll * q * v.p != 1ll * p * v.q)
+            return 1ll * q * v.p < 1ll * p * v.q;
+        return (y != v.y) ? (y < v.y) : (x < v.x);
     }
     vec_2 operator +(const vec_2& v) const{
         return vec_2(x + v.x, y + v.y);
@@ -27,18 +30,6 @@ class vec_2{
     vec_2 operator *(const unit v) const{
         return vec_2(x * v, y * v);
     }
-    // len of vec
-    unit norm() const{
-        return hypot(x, y);
-    }
-    // unit vec
-    vec_2 normalize() const{
-        return vec_2(x / norm(), y / norm());
-    }
-    // size of degree
-    unit polar() const{
-        return fmod(atan2(y, x) + 2 * pi, 2 * pi);
-    }
     unit dot(const vec_2& v) const{
         return x * v.x + y * v.y;
     }
@@ -46,11 +37,6 @@ class vec_2{
         if(x * v.y - v.x * y < 0)  return (unit)-1;
         if(x * v.y - v.x * y > 0)  return (unit)1;
         if(x * v.y - v.x * y == 0) return (unit)0;
-    }
-    // projection
-    vec_2 project(const vec_2& v) const{
-        vec_2 r = v.normalize();
-        return r * r.dot(*this);
     }
 };
 // CCW(Counter Clock Wise)
@@ -62,37 +48,41 @@ unit ccw(vec_2 a, vec_2 b){
 unit ccw(vec_2 p, vec_2 a, vec_2 b){
     return ccw(a - p, b - p);
 }
-// 선분 교차 여부
-bool seg_intersection(vec_2 s1, vec_2 e1, vec_2 s2, vec_2 e2){
-    unit one, two;
-    one = ccw(s1, e1, s2) * ccw(s1, e1, e2);
-    two = ccw(s2, e2, s1) * ccw(s2, e2, e1);
-    if(one == 0 && two == 0){
-        if(e1 < s1) std::swap(s1, e1);
-        if(e2 < s2) std::swap(s2, e2);
-        return (!(e1 < s2 || e2 < s1)) || (e1 == s2 || e1 == e2 || s1 == s2 || s1 == e2);
-    }
-    return one <= 0 && two <= 0;
-}
-vec_2 perp_foot(vec_2 p, vec_2 a, vec_2 b){
-    return a + (p - a).project(b - a);
-}
-// 점과 선 사이의 거리
-unit point_to_line(vec_2 p, vec_2 a, vec_2 b){
-    return (p - perp_foot(p, a, b)).norm();
-}
-bool cmp(const vec_2 &a, const vec_2 &b){
-    if(a.y == b.y) return a.x < b.x;
-    else           return a.y < b.y;
-}
 
 typedef std::vector<vec_2> polygon;
 
 polygon convex_hull(polygon &points){
-    int N = points.size();
-    std::sort(points.begin(), points.end(), cmp);
+    std::stack<int> stk;
+    int next, N = points.size();
+    std::sort(points.begin(), points.end());
     for(int i = 1; i < N; ++i){
         points[i].p = points[i].x - points[0].x;
         points[i].q = points[i].y - points[0].y;
     }
+    std::sort(points.begin() + 1, points.end());
+
+    stk.push(0);
+    stk.push(1);
+    next = 2;
+    while(next < N){
+        while(stk.size() >= 2){
+            int tmp1, tmp2;
+            tmp1 = stk.top();
+            stk.pop();
+            tmp2 = stk.top();
+
+            if(ccw(points[tmp2], points[tmp1], points[next]) > 0){
+                stk.push(tmp1);
+                break;
+            }
+        }
+        stk.push(next++);
+    }
+    // 반시계 방향으로 컨벡스 헐을 구성하는 점을 담은 벡터
+    polygon ans(stk.size());
+    for(int i = stk.size() - 1; i >= 0; --i){
+        ans[i] = points[stk.top()];
+        stk.pop();
+    }
+    return ans;
 }
