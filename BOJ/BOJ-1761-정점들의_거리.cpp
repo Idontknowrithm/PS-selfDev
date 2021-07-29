@@ -1,11 +1,12 @@
 #include<iostream>
 #include<vector>
 #include<algorithm>
+#include<cstring>
 #define pp std::pair<int, int>
 
 typedef int unit;
 
-const unit unit_max = std::numeric_limits<unit>::max();
+const unit unit_max = 2147483647;
 
 class segment_tree{
     unit N;
@@ -52,17 +53,26 @@ class segment_tree{
         }
 };
 
-int N, M, visited[40005];
-std::vector<pp> graph[40005], tree;
-std::vector<int> seg_input;
+const int MAX = 40005;
+int N, M, this_idx, visited[MAX], dist[MAX];
+int real2vir[MAX], vir2real[MAX], first_idx[MAX];
+std::vector<pp> graph[MAX];
+std::vector<int> seg_input, tree;
 
 void treeing(int start, int val_sum){
-    tree.push_back({start, val_sum});
+    int tmp = ++this_idx;
+    tree.push_back(tmp);
+    if(!real2vir[start]){
+        real2vir[start] = tmp;
+        vir2real[tmp] = start;
+    }
+    if(dist[start] == -1)
+        dist[start] = val_sum;
     visited[start] = 1;
     for(int i = 0; i < graph[start].size(); ++i){
         if(!visited[graph[start][i].first]){
             treeing(graph[start][i].first, val_sum + graph[start][i].second);
-            tree.push_back({start, val_sum});
+            tree.push_back(tmp);
         }
     }   
 }
@@ -75,10 +85,30 @@ int main() {
         graph[a].push_back({b, val});
         graph[b].push_back({a, val});
     }
+    memset(dist, -1, sizeof(dist));
     treeing(1, 0);
-
+    memset(first_idx, -1, sizeof(first_idx));
     for(int i = 0; i < tree.size(); ++i){
-        seg_input.push_back(tree[i].second);
+        if(first_idx[tree[i]] == -1)
+            first_idx[tree[i]] = i;
+    }
+    for(int i = 0; i < MAX; ++i)
+        if(real2vir[i])
+            vir2real[real2vir[i]] = i;
+
+    segment_tree RMQ(tree);
+
+    scanf("%d", &M);
+    for(int i = 0; i < M; ++i){
+        scanf("%d %d", &a, &b);
+        if(a == b){
+            printf("0\n");
+            continue;
+        }
+        int tmpa = first_idx[real2vir[a]], tmpb = first_idx[real2vir[b]];
+        if(tmpa > tmpb) std::swap(tmpa, tmpb);
+        int lca = vir2real[RMQ.query(tmpa, tmpb)];
+        printf("%d\n", dist[a] + dist[b] - 2 * dist[lca]);
     }
     return 0;
 }
