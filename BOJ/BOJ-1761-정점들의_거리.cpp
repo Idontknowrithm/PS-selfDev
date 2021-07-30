@@ -1,3 +1,9 @@
+// LCA에 대한 쿼리가 많을 때는 세그트리를 이용하여 풀기
+// 1. 트리의 노드에 대해서 위에 있을 수록 작은 idx를 가지도록 이름을 다시 매기기
+// 2. 트리를 순회한 결과를 배열 형태로 저장함
+// 3. 특정 노드 a에서 특정 노드 b 까지의 LCA는 a에서 b까지의 순회 경로에 무조건 있음
+// 4. 이 사실을 이용하여 RMQ 사용해 a와 b 사이의 가장 작은 idx값을 가지는 노드를 탐색
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -74,23 +80,12 @@ int main() {
     }
     memset(dist, -1, sizeof(dist));
     treeing(1, 0);
-    for(int i = 1; i <= N; ++i)
-        printf("%d ", dist[i]);
-    puts("");
-    for(auto i : tree)
-        printf("%d ", i);
-    puts("");
-    for(auto i : tree)
-        printf("%d ", vir2real[i]);
-    puts("");
+
     memset(first_idx, -1, sizeof(first_idx));
     for(int i = 0; i < tree.size(); ++i){
         if(first_idx[tree[i]] == -1)
             first_idx[tree[i]] = i;
     }
-    for(int i = )
-        printf("%d ", vir2real[i]);
-    puts("");
     segment_tree RMQ(tree);
 
     scanf("%d", &M);
@@ -102,8 +97,7 @@ int main() {
         }
         int tmpa = first_idx[real2vir[a]], tmpb = first_idx[real2vir[b]];
         if(tmpa > tmpb) std::swap(tmpa, tmpb);
-        int lca = vir2real[RMQ.query(tmpa, tmpb)];
-        printf("%d %d %d\n", dist[a], dist[b], dist[lca]);
+        int lca = vir2real[RMQ.query(++tmpa, ++tmpb)];
         printf("%d\n", dist[a] + dist[b] - 2 * dist[lca]);
     }
     return 0;
