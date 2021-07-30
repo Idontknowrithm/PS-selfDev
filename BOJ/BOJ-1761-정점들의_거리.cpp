@@ -38,19 +38,6 @@ class segment_tree{
         unit query(unit left, unit right){
             return query(left, right, 1, 1, N);
         }
-        unit update(unit idx, unit new_val, unit root, unit this_left, unit this_right){
-            if(idx < this_left || this_right < idx)
-                return seq[root];
-            if(this_left == this_right)
-                return seq[root] = new_val;
-            
-            unit mid = (this_left + this_right) / 2;
-            return seq[root] = std::min(update(idx, new_val, root * 2, this_left, mid), 
-                                        update(idx, new_val, root * 2 + 1, mid + 1, this_right));
-        }
-        unit update(unit idx, unit new_val){
-            return update(idx, new_val, 1, 1, N);
-        }
 };
 
 const int MAX = 40005;
@@ -87,15 +74,23 @@ int main() {
     }
     memset(dist, -1, sizeof(dist));
     treeing(1, 0);
+    for(int i = 1; i <= N; ++i)
+        printf("%d ", dist[i]);
+    puts("");
+    for(auto i : tree)
+        printf("%d ", i);
+    puts("");
+    for(auto i : tree)
+        printf("%d ", vir2real[i]);
+    puts("");
     memset(first_idx, -1, sizeof(first_idx));
     for(int i = 0; i < tree.size(); ++i){
         if(first_idx[tree[i]] == -1)
             first_idx[tree[i]] = i;
     }
-    for(int i = 0; i < MAX; ++i)
-        if(real2vir[i])
-            vir2real[real2vir[i]] = i;
-
+    for(int i = )
+        printf("%d ", vir2real[i]);
+    puts("");
     segment_tree RMQ(tree);
 
     scanf("%d", &M);
@@ -108,6 +103,7 @@ int main() {
         int tmpa = first_idx[real2vir[a]], tmpb = first_idx[real2vir[b]];
         if(tmpa > tmpb) std::swap(tmpa, tmpb);
         int lca = vir2real[RMQ.query(tmpa, tmpb)];
+        printf("%d %d %d\n", dist[a], dist[b], dist[lca]);
         printf("%d\n", dist[a] + dist[b] - 2 * dist[lca]);
     }
     return 0;
