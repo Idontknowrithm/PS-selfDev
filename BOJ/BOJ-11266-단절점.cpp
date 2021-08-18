@@ -1,7 +1,7 @@
 // 단절점: 그 정점을 없애면 그래프 그룹의 수가 늘어나는 정점
 // 단절점을 찾는 방법: dfs를 돌아 dfs tree를 만든 뒤에, 
 //  1. tree의 루트라면 자식 노드가 2개 이상이면 단절점
-//  2. 루트가 아닐 때 자신의 번호보다 높은 번호로 올라갈 수 있으면 단절점
+//  2. 루트가 아닐 때 자신의 번호보다 작은 번호로 올라갈 수 있으면 단절점
 
 #include<iostream>
 #include<vector>
@@ -16,12 +16,12 @@ int V, E, ans, order_ptr, order[MAX], visited[MAX];
 std::vector<int> graph[MAX];
 
 // 루트 여부가 is_root에 담긴 고유번호가 cur인 정점에서 출발하여
-// dfs tree 상에서 갈 수 있는 가장 높은 dfs 번호를 반환
+// dfs tree 상에서 갈 수 있는 가장 작은 dfs 번호를 반환
 int find_cutV(int cur, bool is_root){
     visited[cur] = 1;
     // child: cur가 루트일 때는 단절점 여부를 자식 노드의 수로 파악
     // ret = order[cur]: 만약 연결되어있는 자식노드가 없으면
-    //   갈 수 있는 가장 높은 dfs 번호는 자신이므로 미리 ret에 저장
+    //   갈 수 있는 가장 작은 dfs 번호는 자신이므로 미리 ret에 저장
     int child = 0, ret = order[cur] = order_ptr++;
     // 모든 자식 노드에 대해
     for(int i = 0; i < graph[cur].size(); ++i){
@@ -31,19 +31,19 @@ int find_cutV(int cur, bool is_root){
         if(order[next] == -1){
             // 자식이 있다는 소리
             ++child;
-            // 자식 노드에서 갈 수 있는 가장 높은 dfs 번호를 저장
+            // 자식 노드에서 갈 수 있는 가장 작은 dfs 번호를 저장
             int order_max = find_cutV(next, false);
-            // 갈 수 있는 자식이 dfs 번호 상 더 높다면
+            // 갈 수 있는 자식이 dfs 번호 상 더 작다면
             // cur 노드는 단절점이므로 이를 반영
             if(!is_root && order_max >= order[cur])
                 cutV[cur] = true;
             
-            // 반환 값이 가장 높은 dfs 번호이므로 이를 반영
+            // 반환 값이 가장 작은 dfs 번호이므로 이를 반영
             ret = std::min(ret, order_max);
         }
         else{
             // 탐색 대상인 자식 노드가 이미 update 되어있다면
-            // dfs 탐색할 필요가 없고, 가장 높은 dfs 번호만 
+            // dfs 탐색할 필요가 없고, 가장 작은 dfs 번호만 
             // 반환하면 되므로 이를 반영
             ret = std::min(ret, order[next]);
         }
