@@ -1,60 +1,70 @@
 // DP가 아니고 쌩 이분탐색이다...
 
 #include<iostream>
-#include<vector>
+#include<algorithm>
 
-const int MAX = 305;
-int N, M, marbles[MAX];
+const int MAX = 305, INF = 30000;
+int N, M, marbles[MAX], division[MAX];
 
-void solve(){
-    int start = 0, end = 30000, mid;
-    std::vector<int> group, count;
+void bi_search(){
+    bool big_one;
+    int mid, tmp_ans = INF, start = 1, end = INF;
 
     while(start <= end){
+        big_one = false;
         mid = (start + end) / 2;
-        group.clear();
-        count.clear();
-        group.push_back(0);
-        count.push_back(0);
-        int size = 0;
+        int tmp_sum = 0, groups = 1;
         for(int i = 0; i < N; ++i){
-            if(group[size] + marbles[i] > mid){
-                if(!group[size]){
-                    group[size] += marbles[i];
-                    count[size] += 1;
+            if(marbles[i] > mid){
+                start = mid + 1;
+                big_one = true;
+                break;
+            }
+            if(tmp_sum + marbles[i] > mid){
+                if(!tmp_sum){
+                    ++groups;
+                    tmp_sum = 0;
                 }
                 else{
-                    ++size;
-                    group.push_back(0);
-                    group[size] += marbles[i];
-                    count.push_back(1);
+                    ++groups;
+                    tmp_sum = marbles[i];
                 }
             }
             else{
-                group[size] += marbles[i];
-                count[size] += 1;
+                tmp_sum += marbles[i];
             }
         }
-        // if(size + 1 == M){
-        //     int max = 0;
-        //     for(int i = 0; i < size + 1; ++i)
-        //         max = std::max(max, group[i]);
-        //     printf("%d\n", max);
-        //     for(int i = 0; i < count.size(); ++i)
-        //         printf("%d ", count[i]);
-        //     return;
-        // }
-        if(size + 1 <= M)
-            end = mid - 1;
-        else
+        if(groups > M || big_one){
             start = mid + 1;
+        }   
+        else{
+            if(groups == M)
+                tmp_ans = std::min(tmp_ans, mid);
+            end = mid - 1;
+        }
     }
-    int max = 0;
-    for(int i = 0; i < group.size(); ++i)
-        max = std::max(max, group[i]);
-    printf("%d\n", max);
-    for(int i = 0; i < count.size(); ++i)
-        printf("%d ", count[i]);
+    int div_size = 0, tmp = 0, ans = 0;
+    for(int i = 0; i < N; ++i){
+        if(tmp + marbles[i] > tmp_ans){
+            if(!tmp){
+                ++division[div_size++];
+                ans = std::max(ans, marbles[i]);
+                tmp = 0;
+            }
+            else{
+                division[++div_size] = 1;
+                ans = std::max(ans, tmp);
+                tmp = marbles[i];
+            }
+        }
+        else{
+            tmp += marbles[i];
+            ++division[div_size];
+        }
+    }
+    printf("%d\n", ans);
+    for(int i = 0; i <= div_size; ++i)
+        printf("%d ", division[i]);
 }
 
 int main() {
@@ -62,6 +72,6 @@ int main() {
     for(int i = 0; i < N; ++i){
         scanf("%d", &marbles[i]);
     }
-    solve();
+    bi_search();
     return 0;
 }
