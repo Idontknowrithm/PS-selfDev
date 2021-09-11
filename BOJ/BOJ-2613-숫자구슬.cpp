@@ -8,7 +8,7 @@ int N, M, marbles[MAX], division[MAX];
 
 void bi_search(){
     bool big_one;
-    int mid, tmp_ans = INF, start = 1, end = INF;
+    int mid, ans = INF, start = 1, end = INF;
 
     while(start <= end){
         big_one = false;
@@ -38,24 +38,15 @@ void bi_search(){
             start = mid + 1;
         }   
         else{
-            if(groups == M)
-                tmp_ans = std::min(tmp_ans, mid);
+            ans = std::min(ans, mid);
             end = mid - 1;
         }
     }
-    int div_size = 0, tmp = 0, ans = 0;
+    int div_size = 0, tmp = 0;
     for(int i = 0; i < N; ++i){
-        if(tmp + marbles[i] > tmp_ans){
-            if(!tmp){
-                ++division[div_size++];
-                ans = std::max(ans, marbles[i]);
-                tmp = 0;
-            }
-            else{
-                division[++div_size] = 1;
-                ans = std::max(ans, tmp);
-                tmp = marbles[i];
-            }
+        if(marbles[i] + tmp > ans){
+            tmp = marbles[i];
+            division[++div_size] = 1;
         }
         else{
             tmp += marbles[i];
@@ -63,8 +54,18 @@ void bi_search(){
         }
     }
     printf("%d\n", ans);
-    for(int i = 0; i <= div_size; ++i)
-        printf("%d ", division[i]);
+    int idle = M - div_size - 1;
+    for(int i = 0; i <= div_size; ++i){
+        if(division[i] == 1)
+            printf("%d ", division[i]);
+        else{
+            while(idle >= 1 && division[i] >= 2){
+                printf("1 ");
+                --division[i]; --idle;
+            }
+            printf("%d ", division[i]);
+        }
+    }
 }
 
 int main() {
