@@ -62,7 +62,7 @@ std::string DP_max(int idx){
     }
     return ret;
 }
-std::string DP_min(int idx, bool start){
+std::string DP_min(int idx){
     if(!idx){
         std::string t("");
         return t;
@@ -75,31 +75,31 @@ std::string DP_min(int idx, bool start){
     ret = "99999999999999999999";
     if(idx >= 2 && idx != 3){
         tmp = "1";
-        ret = min_str(ret, DP_min(idx - 2, false) + tmp);        
+        ret = min_str(ret, DP_min(idx - 2) + tmp);        
     }
     if(idx >= 3 && idx != 4){
         tmp = "7";
-        ret = min_str(ret, DP_min(idx - 3, false) + tmp);
+        ret = min_str(ret, DP_min(idx - 3) + tmp);
     }
     if(idx >= 4 && idx != 5){
         tmp = "4";
-        ret = min_str(ret, DP_min(idx - 4, false) + tmp);    
+        ret = min_str(ret, DP_min(idx - 4) + tmp);    
     }
     if(idx >= 5 && idx != 6){
         tmp = "3";
-        ret = min_str(ret, DP_min(idx - 5, false) + tmp);        
+        ret = min_str(ret, DP_min(idx - 5) + tmp);        
     }
     if(idx >= 6 && idx != 7){
         if(idx != 6){
             tmp = "0";
-            ret = min_str(ret, DP_min(idx - 6, false) + tmp);
+            ret = min_str(ret, DP_min(idx - 6) + tmp);
         }
         tmp = "6";
-        ret = min_str(ret, DP_min(idx - 6, false) + tmp);
+        ret = min_str(ret, DP_min(idx - 6) + tmp);
     }
     if(idx >= 7 && idx != 8){
         tmp = "8";
-        ret = min_str(ret, DP_min(idx - 7, false) + tmp);   
+        ret = min_str(ret, DP_min(idx - 7) + tmp);   
     }
     return ret;
 }
@@ -117,7 +117,7 @@ int main() {
             std::string tmp("x");
             cache[i] = tmp;
         }
-        std::cout << DP_min(N, true) << " ";
+        std::cout << DP_min(N) << " ";
         for(int i = 0; i < 105; ++i){
             std::string tmp("x");
             cache[i] = tmp;
