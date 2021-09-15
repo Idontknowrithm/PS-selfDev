@@ -1,3 +1,5 @@
+// 3을 2로만 했어도....
+
 #include<iostream>
 #include<cstring>
 
@@ -86,7 +88,7 @@ std::string DP_min(int idx){
         ret = min_str(ret, DP_min(idx - 4) + tmp);    
     }
     if(idx >= 5 && idx != 6){
-        tmp = "3";
+        tmp = "2";
         ret = min_str(ret, DP_min(idx - 5) + tmp);        
     }
     if(idx >= 6 && idx != 7){
@@ -108,9 +110,10 @@ int main() {
     // 2: 1
     // 3: 7
     // 4: 4
-    // 5: 3 5
+    // 5: 2 3 5
     // 6: 6 9 0
     // 7: 8
+
     for(std::cin >> T; T > 0; --T){
         std::cin >> N;
         for(int i = 0; i < 105; ++i){
