@@ -1,4 +1,4 @@
-// 다시 천천히 생각해서 해보자
+// 복붙 할 때는 바꿔야 하는 요소 꼼꼼하게 
 
 #include<iostream>
 #include<vector>
@@ -30,7 +30,7 @@ int main() {
         data.push_back({t, {x, y}});
     }
     std::sort(data.begin(), data.end());
-    int kmin = 10000, kmax = 0, Kmin = 0, Kmax = 10000;
+    int kmin = 10000, kmax = 0;
     for(int in = 1; in <= N; ++in){
         for(int K = 0; K <= 250; ++K){
             int tmp_infec[105] = {0,}, k_left[105] = {0,};
@@ -49,7 +49,7 @@ int main() {
                     tmp_infec[data[i].dos] = 1;
                     k_left[data[i].dos] = K;
                 }
-                else if(tmp_infec[data[i].dos] == 0 && tmp_infec[data[i].tres] == 1){
+                else if(tmp_infec[data[i].dos] == 1 && tmp_infec[data[i].tres] == 1){
                     k_left[data[i].tres] -= (k_left[data[i].tres]) ? 1 : 0;
                     k_left[data[i].dos] -= (k_left[data[i].dos]) ? 1 : 0;
                 }
@@ -60,17 +60,15 @@ int main() {
                 kmax = std::max(kmax, K);
             }
         }
-        Kmin = std::max(Kmin, kmin);
-        Kmax = std::min(Kmax, kmax);
     }
     for(int i = 0; i < 105; ++i)
         ans += possible[i];
     std::cout << ans << " ";
-    if(kmin == 250)
+    if(kmin >= T)
         std::cout << "Infinity ";
     else 
         std::cout << kmin << " ";
-    if(kmax == 250)
+    if(kmax >= T)
         std::cout << "Infinity";
     else 
         std::cout << kmax;
