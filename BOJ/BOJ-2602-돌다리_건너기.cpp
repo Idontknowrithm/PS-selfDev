@@ -1,57 +1,41 @@
+// 변수 설정은 순서 등 헷갈리지 않게 하자
+
 #include<iostream>
 #include<cstring>
 #include<vector>
 #include<algorithm>
 
 const int INF = 2147483647;
-int cache[105][2][25];
-std::vector<int> roll, bridge[2];
+int cache[2][105][25];
+std::string roll, bridge[2];
 
-int interpreter(char a){
-    if(a == 'R') return 1;
-    if(a == 'I') return 2;
-    if(a == 'N') return 3;
-    if(a == 'G') return 4;
-    if(a == 'S') return 5;
-}
-
-int DP(int C, int R, int idx){
-    std::cout << C << " " << R << " " << idx << "\n";
+int DP(int R, int C, int idx){
     if(idx == roll.size() - 1) 
         return 1;
 
-    int &ret = cache[C][R][idx];
+    int &ret = cache[R][C][idx];
     if(ret != -1) return ret;
 
     ret = 0;
     for(int i = C + 1; i < bridge[0].size(); ++i){
-        if(bridge[0][i] == roll[idx + 1])
-            ret += DP(i, 0, idx + 1);
-        if(bridge[1][i] == roll[idx + 1])
-            ret += DP(i, 1, idx + 1);
+        if(R == 1 && bridge[0][i] == roll[idx + 1])
+            ret += DP(0, i, idx + 1);
+        if(R == 0 && bridge[1][i] == roll[idx + 1])
+            ret += DP(1, i, idx + 1);
     }
     return ret;
 }
 
 int main() {
-    std::string input;
-    std::cin >> input;
-    for(int i = 0; i < input.size(); ++i)
-        roll.push_back(interpreter(input[i]));
-    std::cin >> input;
-    for(int i = 0; i < input.size(); ++i)
-        bridge[0].push_back(interpreter(input[i]));
-    std::cin >> input;
-    for(int i = 0; i < input.size(); ++i)
-        bridge[1].push_back(interpreter(input[i]));
+    std::cin >> roll >> bridge[0] >> bridge[1];
     
     memset(cache, -1, sizeof(cache));
-    int ans = -1;
+    int ans = 0;
     for(int i = 0; i < bridge[0].size(); ++i){
         if(bridge[0][i] == roll[0])
-            ans = std::max(ans, DP(i, 0, 0));
+            ans += DP(0, i, 0);
         if(bridge[1][i] == roll[0])
-            ans = std::max(ans, DP(i, 1, 0));
+            ans += DP(1, i, 0);
     }
     std::cout << ans;
     return 0;
