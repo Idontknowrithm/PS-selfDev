@@ -1,3 +1,6 @@
+// 해를 구하는 DP -> DP로 cache를 갱신해놓은 뒤에 DFS로
+//                 cache에 갱신된 답을 따라 최적해를 구함
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
