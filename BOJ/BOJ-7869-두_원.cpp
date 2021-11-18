@@ -1,4 +1,5 @@
-// 공식 유도 중 오류가 난 듯
+// float 형을 사용할 때는 최대한 적은 수식을 거치게끔 해야함
+// 또는 최대한 간단한 식을 사용하기
 
 #include<iostream>
 #include<algorithm>
@@ -15,42 +16,18 @@ int main() {
     }
     len_between = sqrt((X1 - X2) * (X1 - X2) + (Y1 - Y2) * (Y1 - Y2));
     if(r1 + r2 <= len_between)
-        printf("0");
+        printf("0.000");
     else if(len_between + r1 <= r2){
         ans = M_PI * r1 * r1;
         printf("%.3lf", ans);
     }
-    else if(r1 * r1 + len_between * len_between >= r2 * r2){
-        double hi = M_PI / 2, lo = 0;
-        for(int i = 0; i < 500; ++i){
-            double mid = (hi + lo) / 2;
-            double exp = r2 * cos(mid) + r1 * sqrt(1 - (r2 * r2)/(r1 * r1) * sin(mid) * sin(mid));
-            if(exp > len_between)
-                lo = mid;
-            else 
-                hi = mid;
-        }
-        double l1 = r2 * cos(hi), l2 = len_between - l1;
-        ans = r2 * r2 * hi - l2 * r2 * sin(hi);
-        ans += r1 * r1 * acos(l1 / r1) - l1 * sqrt(r1 * r1 - l1 * l1);
-        printf("%.3lf", ans);
-    }
     else{
-        double hi = M_PI / 2, lo = 0;
-        for(int i = 0; i < 100; ++i){
-            double mid = (hi + lo) / 2;
-            double exp = r1 * r1 * sin(mid) * sin(mid) + len_between * len_between + 
-                         2 * len_between * r1 * cos(mid) + r1 * r1 * cos(mid) * cos(mid);
-            if(exp > r2 * r2)
-                lo = mid;
-            else 
-                hi = mid;
-        }
-        double theta2 = asin(r1 * sin(hi) / r2);
-        printf("%.3lf\n", theta2);
-        ans = 0.5 * r1 * r1 * (2 * M_PI - 2 * hi) + r1 * r1 * sin(hi) * cos(hi);
-        ans += r2 * r2 * theta2 - r2 * r2 * sin(theta2) * cos(theta2);
-        printf("%.3lf", ans);
+        double theta1 = acos((r1 * r1 + len_between * len_between - r2 * r2) / (2 * r1 * len_between));
+        double theta2 = acos((r2 * r2 + len_between * len_between - r1 * r1) / (2 * r2 * len_between));
+        double ans1 = (r1 * r1 * theta1) - (r1 * r1 * sin(2 * theta1)) / 2;
+        double ans2 = (r2 * r2 * theta2) - (r2 * r2 * sin(2 * theta2)) / 2;
+
+        printf("%.3lf", ans1 + ans2);
     }
     return 0;
 }
