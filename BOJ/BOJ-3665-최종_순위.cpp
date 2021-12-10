@@ -1,30 +1,24 @@
+// 확실한 순위를 고를 수 없는 경우에 ?를 출력하라 했는데, 실제로는 그런
+// 경우가 없다고 한다. 이 부분을 구현하면서 많은 시행착오들이 있었는데(사이클 구분)
+// 이건 당할 수밖에 없는 함정인 것 같다. 이런 문제 자체의 함정 같은 경우는
+// 가능하면 걸러내보고 증명을 잘 못하겠다면 포기하는 것도 괜찮을 것 같다. 혹은
+// 그것을 구현하는 데 불가능한 시간이나 메모리 제한이 있다면 의심을 해보는 것도
+// 하나의 방법일 수 있겠다
+
 #include<iostream>
 #include<cstring>
 #include<vector>
+#include<queue>
 
 const int MAX = 505;
 int T, N, M, is_visited, graph[MAX][MAX], rank[MAX], topological[MAX];
-bool cycle, visited[MAX], tmp_visited[MAX];
-
-void DFS(int start, int prev){
-    if(tmp_visited[start]){
-        cycle = true;
-        return;
-    }
-    visited[start] = true;
-    for(int i = 1; i <= N; ++i){
-        if(graph[start][i] && i != prev){
-            tmp_visited[start] = true;
-            DFS(i, start);
-            tmp_visited[start] = false;
-        }
-    }
-}
+bool cycle;
 
 int main() {
     for(scanf("%d", &T); T > 0; --T){
         memset(graph, 0, sizeof(graph));
         memset(topological, 0, sizeof(topological));
+        
         scanf("%d", &N);
         for(int i = 0; i < N; ++i)
             scanf("%d", &rank[i]);
@@ -51,48 +45,31 @@ int main() {
                 ++topological[b];
             }
         }
-        cycle = false;
-        is_visited = 0;
-        for(int i = 1; i <= N; ++i){
-            if(!topological[i]){
-                tmp_visited[i] = true;
-                DFS(i, -1);
-                break;
-            }
-        }
-        for(int i = 1; i <= N; ++i)
-            is_visited += (visited[i]) ? 1 : 0;
-        if(cycle || is_visited != N){
-            printf("IMPOSSIBLE\n");
-            continue;
-        }
         std::vector<int> ans;
+        std::queue<int> que;
         bool question = false;
-        while(ans.size() != N){
-            int equal = 0, idx;
+        for(int i = 1; i <= N; ++i)
+            if(!topological[i])
+                que.push(i);
+        while(!que.empty()){
+            int cur = que.front();
+            ans.push_back(cur);
+            que.pop();
             for(int i = 1; i <= N; ++i){
-                if(!topological[i]){
-                    ++equal;
-                    idx = i;
+                if(graph[cur][i]){
+                    --topological[i];
+                    if(!topological[i])
+                        que.push(i);
                 }
             }
-            if(equal != 1){
-                question = true;
-                break;
-            }
-            ans.push_back(idx);
-            topological[idx] = 10000005;
-            for(int i = 1; i <= N; ++i){
-                if(graph[idx][i])
-                    --topological[i];
-            }
         }
-        if(question)
-            printf("?\n");
-        else{
+        if(ans.size() == N){
             for(int i = 0; i < ans.size(); ++i)
                 printf("%d ", ans[i]);
             puts("");
+        }
+        else{
+            printf("IMPOSSIBLE\n");
         }
     }
     return 0;
