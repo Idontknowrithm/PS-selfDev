@@ -1,21 +1,18 @@
 #include<iostream>
 
-const int MAX = 200005;
-int M, Q, input[MAX], sparse[MAX][25];
+const int MAX = 500005;
+int M, Q, sparse[MAX][25];
 
 int main() {
     scanf("%d", &M);
-    for(int i = 0; i < M; ++i){
-        scanf("%d", &input[i + 1]);
-    }
     for(int i = 1; i <= M; ++i){
-        sparse[i][1] = input[i];
-        int power = 2;
-        for(int u = 2; power <= M; ++u){
-            sparse[i][u] = input[sparse[i][u - 1]];
-            power *= 2;
-        }
+        scanf("%d", &sparse[i][1]);
     }
+    for(int u = 2; u < 21; ++u)
+    for(int i = 1; i <= M; ++i)
+        sparse[i][u] = sparse[sparse[i][u - 1]][u - 1];
+        
+    
     scanf("%d", &Q);
     for(int i = 0; i < Q; ++i){
         int n, x, power = 1;
@@ -24,7 +21,7 @@ int main() {
             if(n & 1)
                 x = sparse[x][power];
 
-            power += 1;
+            ++power;
             n >>= 1;
         }
         printf("%d\n", x);
