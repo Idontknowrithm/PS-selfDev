@@ -1,3 +1,6 @@
+// 보통의 알고리즘 문제는 더러운 연산을 요구하지 않는다. 따라서
+// 요구하는 알고리즘을 깨끗하게 응용할 생각을 해야할 것 같다
+
 #include<iostream>
 #include<vector>
 #include<algorithm>
@@ -6,10 +9,10 @@
 #include<cstring>
 
 const int MAX = 100005;
-int T, N, M, belong[MAX];
-bool visited[MAX], starter[MAX];
+int T, N, M, belong[MAX], in_degree[MAX];
+bool visited[MAX];
 std::stack<int> stk;
-std::vector<int> mini_scc, scc_set[MAX], graph[MAX], r_graph[MAX];
+std::vector<int> mini_scc, graph[MAX], r_graph[MAX];
 
 void DFS(int cur){
     visited[cur] = true;
@@ -40,19 +43,18 @@ void SCC(){
         for(int i = 0; i < mini_scc.size(); ++i){
             belong[mini_scc[i]] = mini_scc[0];
         }
-        scc_set[mini_scc[0]] = mini_scc;
+        in_degree[mini_scc[0]] = 0;
     }
 }
 
 int main() {
     for(scanf("%d", &T); T > 0; --T){
         memset(belong, -1, sizeof(belong));
+        memset(in_degree, -1, sizeof(in_degree));
         memset(visited, false, sizeof(visited));
-        memset(starter, true, sizeof(starter));
         for(int i = 0; i < MAX; ++i){
             graph[i].clear();
             r_graph[i].clear();
-            scc_set[i].clear();
         }
         scanf("%d %d", &N, &M);
         for(int i = 0; i < M; ++i){
@@ -60,7 +62,6 @@ int main() {
             scanf("%d %d", &a, &b);
             graph[a].push_back(b);
             r_graph[b].push_back(a);
-
         }
 
         for(int i = 1; i <= N; ++i)
@@ -71,19 +72,15 @@ int main() {
         SCC();
         int ans = 0;
         for(int i = 1; i <= N; ++i){
-            bool possible = true;
-            if(scc_set[i].size() != 0){
-                for(int u = 0; u < scc_set[i].size(); ++u){
-                    int cur = scc_set[i][u];
-                    for(int k = 0; k < r_graph[cur].size(); ++k){
-                        int valid = r_graph[cur][k];
-                        if(belong[valid] != -1 && belong[valid] != i)
-                            possible = false;
-                    }
+            for(int u = 0; u < graph[i].size(); ++u){
+                int next = graph[i][u];
+                if(belong[i] != belong[next]){
+                    ++in_degree[belong[next]];
                 }
             }
-            ans += (possible) ? 1 : 0;
         }
+        for(int i = 1; i <= N; ++i)
+            ans += (!in_degree[i]) ? 1 : 0;
         printf("%d\n", ans);
     }
     return 0;
